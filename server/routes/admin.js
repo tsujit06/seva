@@ -281,6 +281,30 @@ router.put('/payments/:id/update', (req, res) => {
   }
 });
 
+/**
+ * DELETE /api/admin/payments/:id/delete
+ * Delete a wrong entry — removes payment, membership, and member (if no other records)
+ */
+router.delete('/payments/:id/delete', (req, res) => {
+  try {
+    const paymentId = parseInt(req.params.id);
+    const payment = db.getPayment(paymentId);
+    if (!payment) {
+      return res.status(404).json({ success: false, error: 'Payment not found.' });
+    }
+
+    const deleted = db.deleteEntry(paymentId);
+    if (deleted) {
+      res.json({ success: true, message: 'Entry deleted successfully.' });
+    } else {
+      res.status(500).json({ success: false, error: 'Failed to delete entry.' });
+    }
+  } catch (error) {
+    console.error('Delete entry error:', error);
+    res.status(500).json({ success: false, error: 'Failed to delete entry.' });
+  }
+});
+
 /** GET /api/admin/export - Export ALL payments as CSV */
 router.get('/export', (req, res) => {
   try {

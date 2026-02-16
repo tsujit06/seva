@@ -6,6 +6,7 @@ const fs = require('fs');
 const ASSETS_DIR = path.join(__dirname, '..', 'assets');
 const GODDESS_LOGO_PATH = path.join(ASSETS_DIR, 'goddess-logo.png');
 const WATERMARK_PATH = path.join(ASSETS_DIR, 'watermark.png');
+const RECEIPT_BG_PATH = path.join(ASSETS_DIR, 'receipt-bg.png');
 const KANNADA_FONT_PATH = path.join(ASSETS_DIR, 'NotoSansKannada.ttf');
 const NOTO_SANS_PATH = path.join(ASSETS_DIR, 'NotoSans.ttf');
 
@@ -50,8 +51,37 @@ function numberToWords(num) {
   return c(Math.floor(num));
 }
 
+function numberToKannadaWords(num) {
+  if (num === 0) return '\u0CB8\u0CCA\u0CA8\u0CCD\u0CA8\u0CC6'; // ಸೊನ್ನೆ
+  const ones = ['', '\u0C92\u0C82\u0CA6\u0CC1', '\u0C8E\u0CB0\u0CA1\u0CC1', '\u0CAE\u0CC2\u0CB0\u0CC1', '\u0CA8\u0CBE\u0CB2\u0CCD\u0C95\u0CC1', '\u0C90\u0CA6\u0CC1', '\u0C86\u0CB0\u0CC1', '\u0C8F\u0CB3\u0CC1', '\u0C8E\u0C82\u0C9F\u0CC1', '\u0C92\u0C82\u0CAC\u0CA4\u0CCD\u0CA4\u0CC1',
+    '\u0CB9\u0CA4\u0CCD\u0CA4\u0CC1', '\u0CB9\u0CA8\u0CCD\u0CA8\u0CCA\u0C82\u0CA6\u0CC1', '\u0CB9\u0CA8\u0CCD\u0CA8\u0CC6\u0CB0\u0CA1\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CAE\u0CC2\u0CB0\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CA8\u0CBE\u0CB2\u0CCD\u0C95\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CA8\u0CC8\u0CA6\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CA8\u0CBE\u0CB0\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CA8\u0CC7\u0CB3\u0CC1', '\u0CB9\u0CA6\u0CBF\u0CA8\u0CC6\u0C82\u0C9F\u0CC1', '\u0CB9\u0CA4\u0CCD\u0CA4\u0CCA\u0C82\u0CAC\u0CA4\u0CCD\u0CA4\u0CC1'];
+  // ones = ['', 'ಒಂದು', 'ಎರಡು', 'ಮೂರು', 'ನಾಲ್ಕು', 'ಐದು', 'ಆರು', 'ಏಳು', 'ಎಂಟು', 'ಒಂಬತ್ತು', 'ಹತ್ತು', 'ಹನ್ನೊಂದು', 'ಹನ್ನೆರಡು', 'ಹದಿಮೂರು', 'ಹದಿನಾಲ್ಕು', 'ಹದಿನೈದು', 'ಹದಿನಾರು', 'ಹದಿನೇಳು', 'ಹದಿನೆಂಟು', 'ಹತ್ತೊಂಬತ್ತು']
+  const tens = ['', '', '\u0C87\u0CAA\u0CCD\u0CAA\u0CA4\u0CCD\u0CA4\u0CC1', '\u0CAE\u0CC2\u0CB5\u0CA4\u0CCD\u0CA4\u0CC1', '\u0CA8\u0CB2\u0CB5\u0CA4\u0CCD\u0CA4\u0CC1', '\u0C90\u0CB5\u0CA4\u0CCD\u0CA4\u0CC1', '\u0C85\u0CB0\u0CB5\u0CA4\u0CCD\u0CA4\u0CC1', '\u0C8E\u0CAA\u0CCD\u0CAA\u0CA4\u0CCD\u0CA4\u0CC1', '\u0C8E\u0C82\u0CAC\u0CA4\u0CCD\u0CA4\u0CC1', '\u0CA4\u0CCA\u0C82\u0CAC\u0CA4\u0CCD\u0CA4\u0CC1'];
+  // tens = ['', '', 'ಇಪ್ಪತ್ತು', 'ಮೂವತ್ತು', 'ನಲವತ್ತು', 'ಐವತ್ತು', 'ಅರವತ್ತು', 'ಎಪ್ಪತ್ತು', 'ಎಂಬತ್ತು', 'ತೊಂಬತ್ತು']
+  function c(n) {
+    if (n < 20) return ones[n];
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '');
+    if (n < 1000) return ones[Math.floor(n / 100)] + ' \u0CA8\u0CC2\u0CB0\u0CC1' + (n % 100 ? ' ' + c(n % 100) : ''); // ನೂರು
+    if (n < 100000) return c(Math.floor(n / 1000)) + ' \u0CB8\u0CBE\u0CB5\u0CBF\u0CB0' + (n % 1000 ? ' ' + c(n % 1000) : ''); // ಸಾವಿರ
+    if (n < 10000000) return c(Math.floor(n / 100000)) + ' \u0CB2\u0C95\u0CCD\u0CB7' + (n % 100000 ? ' ' + c(n % 100000) : ''); // ಲಕ್ಷ
+    return c(Math.floor(n / 10000000)) + ' \u0C95\u0CCB\u0C9F\u0CBF' + (n % 10000000 ? ' ' + c(n % 10000000) : ''); // ಕೋಟಿ
+  }
+  return c(Math.floor(num));
+}
+
 function getPlanDisplayName(pt) {
   return { archana: 'Archana Seva', sahasranama: 'Sahasranama Seva', nitya_archana: 'Nitya Archana Seva', saswatha: 'Saswatha Seva Membership', custom: 'Custom Seva / Donation' }[pt] || pt;
+}
+
+// ಸೇವಾ ಹೆಸರುಗಳು (Kannada plan names)
+function getPlanDisplayNameKannada(pt) {
+  return {
+    archana: '\u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CBE \u0CB8\u0CC7\u0CB5\u0CC6',               // ಅರ್ಚನಾ ಸೇವೆ
+    sahasranama: '\u0CB8\u0CB9\u0CB8\u0CCD\u0CB0\u0CA8\u0CBE\u0CAE \u0CB8\u0CC7\u0CB5\u0CC6', // ಸಹಸ್ರನಾಮ ಸೇವೆ
+    nitya_archana: '\u0CA8\u0CBF\u0CA4\u0CCD\u0CAF \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CBE \u0CB8\u0CC7\u0CB5\u0CC6', // ನಿತ್ಯ ಅರ್ಚನಾ ಸೇವೆ
+    saswatha: '\u0CB6\u0CBE\u0CB6\u0CCD\u0CB5\u0CA4 \u0CB8\u0CC7\u0CB5\u0CBE \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5', // ಶಾಶ್ವತ ಸೇವಾ ಸದಸ್ಯತ್ವ
+    custom: '\u0CB5\u0CBF\u0CB6\u0CC7\u0CB7 \u0CB8\u0CC7\u0CB5\u0CC6 / \u0CA6\u0CBE\u0CA8',  // ವಿಶೇಷ ಸೇವೆ / ದಾನ
+  }[pt] || pt;
 }
 
 function getPaymentMethodName(m) {
@@ -70,11 +100,38 @@ function getSevaNote(pt) {
   return n[pt] || '';
 }
 
+// Kannada seva notes (ಸೇವಾ ಸೂಚನೆಗಳು)
+function getSevaNoteKannada(pt) {
+  const n = {
+    archana: '\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6: \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CBE \u0CB8\u0CC7\u0CB5\u0CC6\u0CAF\u0CC1 \u0C92\u0CB3\u0C97\u0CCA\u0C82\u0CA1\u0CBF\u0CB0\u0CC1\u0CB5\u0CC1\u0CA6\u0CC1 1. \u0CAE\u0CBE\u0CB8\u0CBF\u0C95 \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CC6 \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CB8\u0C82\u0C95\u0CB2\u0CCD\u0CAA\u0CA6\u0CB2\u0CCD\u0CB2\u0CBF \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1 \u0CB8\u0CC7\u0CB0\u0CCD\u0CAA\u0CA1\u0CC6, 2. \u0CB9\u0CAC\u0CCD\u0CAC \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CAA\u0CC2\u0C9C\u0CC6 \u0CB8\u0CC2\u0C9A\u0CA8\u0CC6\u0C97\u0CB3\u0CC1 (\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6 \u0CAE\u0CBE\u0CA4\u0CCD\u0CB0), \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 3. \u0CA1\u0CBF\u0C9C\u0CBF\u0C9F\u0CB2\u0CCD \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5 \u0CAA\u0CCD\u0CB0\u0CAE\u0CBE\u0CA3\u0CAA\u0CA4\u0CCD\u0CB0.',
+    // ಸೂಚನೆ: ಅರ್ಚನಾ ಸೇವೆಯು ಒಳಗೊಂಡಿರುವುದು 1. ಮಾಸಿಕ ಅರ್ಚನೆ ಮತ್ತು ಸಂಕಲ್ಪದಲ್ಲಿ ಹೆಸರು ಸೇರ್ಪಡೆ, 2. ಹಬ್ಬ ಮತ್ತು ಪೂಜೆ ಸೂಚನೆಗಳು (ಸೂಚನೆ ಮಾತ್ರ), ಮತ್ತು 3. ಡಿಜಿಟಲ್ ಸದಸ್ಯತ್ವ ಪ್ರಮಾಣಪತ್ರ.
+    sahasranama: '\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6: \u0CB8\u0CB9\u0CB8\u0CCD\u0CB0\u0CA8\u0CBE\u0CAE \u0CB8\u0CC7\u0CB5\u0CC6\u0CAF\u0CC1 \u0C92\u0CB3\u0C97\u0CCA\u0C82\u0CA1\u0CBF\u0CB0\u0CC1\u0CB5\u0CC1\u0CA6\u0CC1 1. \u0CAE\u0CBE\u0CB8\u0CBF\u0C95 \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CC6 \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CB8\u0C82\u0C95\u0CB2\u0CCD\u0CAA\u0CA6\u0CB2\u0CCD\u0CB2\u0CBF \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1 \u0CB8\u0CC7\u0CB0\u0CCD\u0CAA\u0CA1\u0CC6, 2. \u0CA6\u0CC7\u0CB5\u0CB8\u0CCD\u0CA5\u0CBE\u0CA8\u0C95\u0CCD\u0C95\u0CC6 \u0CAD\u0CC7\u0C9F\u0CBF \u0CA8\u0CC0\u0CA1\u0CBF\u0CA6\u0CBE\u0C97 \u0CAA\u0CCD\u0CB0\u0CB8\u0CBE\u0CA6, 3. \u0CAD\u0C95\u0CCD\u0CA4\u0CB0 \u0CB9\u0CC6\u0CB8\u0CB0\u0CBF\u0CA8\u0CB2\u0CCD\u0CB2\u0CBF \u0CA8\u0CBF\u0CB0\u0CCD\u0CA6\u0CBF\u0CB7\u0CCD\u0C9F \u0CA6\u0CBF\u0CA8\u0CA6\u0C82\u0CA6\u0CC1 \u0CA6\u0CC7\u0CB5\u0CBF\u0C97\u0CC6 \u0CA8\u0CC8\u0CB5\u0CC7\u0CA6\u0CCD\u0CAF, 4. \u0CB9\u0CAC\u0CCD\u0CAC \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CAA\u0CC2\u0C9C\u0CC6 \u0CB8\u0CC2\u0C9A\u0CA8\u0CC6\u0C97\u0CB3\u0CC1 (\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6 \u0CAE\u0CBE\u0CA4\u0CCD\u0CB0), \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CA1\u0CBF\u0C9C\u0CBF\u0C9F\u0CB2\u0CCD \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5 \u0CAA\u0CCD\u0CB0\u0CAE\u0CBE\u0CA3\u0CAA\u0CA4\u0CCD\u0CB0.',
+    // ಸೂಚನೆ: ಸಹಸ್ರನಾಮ ಸೇವೆಯು ಒಳಗೊಂಡಿರುವುದು 1. ಮಾಸಿಕ ಅರ್ಚನೆ ಮತ್ತು ಸಂಕಲ್ಪದಲ್ಲಿ ಹೆಸರು ಸೇರ್ಪಡೆ, 2. ದೇವಸ್ಥಾನಕ್ಕೆ ಭೇಟಿ ನೀಡಿದಾಗ ಪ್ರಸಾದ, 3. ಭಕ್ತರ ಹೆಸರಿನಲ್ಲಿ ನಿರ್ದಿಷ್ಟ ದಿನದಂದು ದೇವಿಗೆ ನೈವೇದ್ಯ, 4. ಹಬ್ಬ ಮತ್ತು ಪೂಜೆ ಸೂಚನೆಗಳು (ಸೂಚನೆ ಮಾತ್ರ), ಮತ್ತು ಡಿಜಿಟಲ್ ಸದಸ್ಯತ್ವ ಪ್ರಮಾಣಪತ್ರ.
+    nitya_archana: '\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6: \u0CA8\u0CBF\u0CA4\u0CCD\u0CAF \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CBE \u0CB8\u0CC7\u0CB5\u0CC6\u0CAF\u0CC1 \u0C92\u0CB3\u0C97\u0CCA\u0C82\u0CA1\u0CBF\u0CB0\u0CC1\u0CB5\u0CC1\u0CA6\u0CC1 1. \u0CA6\u0CC8\u0CA8\u0C82\u0CA6\u0CBF\u0CA8 \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CC6\u0CAF\u0CB2\u0CCD\u0CB2\u0CBF \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1 \u0CB8\u0CC7\u0CB0\u0CCD\u0CAA\u0CA1\u0CC6, 2. \u0CB5\u0CBE\u0CB0\u0CCD\u0CB7\u0CBF\u0C95 \u0CB5\u0CBF\u0CB6\u0CC7\u0CB7 \u0CB9\u0CCB\u0CAE\u0CA6\u0CB2\u0CCD\u0CB2\u0CBF \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1 \u0CB8\u0CC7\u0CB0\u0CCD\u0CAA\u0CA1\u0CC6, 3. \u0CAE\u0CBE\u0CB8\u0CBF\u0C95 \u0CAA\u0CCD\u0CB0\u0CB8\u0CBE\u0CA6 \u0C95\u0CCA\u0CB0\u0CBF\u0CAF\u0CB0\u0CCD, 4. \u0CB9\u0CAC\u0CCD\u0CAC \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CAA\u0CC2\u0C9C\u0CC6 \u0CB8\u0CC2\u0C9A\u0CA8\u0CC6\u0C97\u0CB3\u0CC1 (\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6 \u0CAE\u0CBE\u0CA4\u0CCD\u0CB0), \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 5. \u0CA1\u0CBF\u0C9C\u0CBF\u0C9F\u0CB2\u0CCD \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5 \u0CAA\u0CCD\u0CB0\u0CAE\u0CBE\u0CA3\u0CAA\u0CA4\u0CCD\u0CB0.',
+    // ಸೂಚನೆ: ನಿತ್ಯ ಅರ್ಚನಾ ಸೇವೆಯು ಒಳಗೊಂಡಿರುವುದು 1. ದೈನಂದಿನ ಅರ್ಚನೆಯಲ್ಲಿ ಹೆಸರು ಸೇರ್ಪಡೆ, 2. ವಾರ್ಷಿಕ ವಿಶೇಷ ಹೋಮದಲ್ಲಿ ಹೆಸರು ಸೇರ್ಪಡೆ, 3. ಮಾಸಿಕ ಪ್ರಸಾದ ಕೊರಿಯರ್, 4. ಹಬ್ಬ ಮತ್ತು ಪೂಜೆ ಸೂಚನೆಗಳು (ಸೂಚನೆ ಮಾತ್ರ), ಮತ್ತು 5. ಡಿಜಿಟಲ್ ಸದಸ್ಯತ್ವ ಪ್ರಮಾಣಪತ್ರ.
+    saswatha: '\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6: \u0CB6\u0CBE\u0CB6\u0CCD\u0CB5\u0CA4 \u0CB8\u0CC7\u0CB5\u0CBE \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5\u0CB5\u0CC1 \u0C92\u0CB3\u0C97\u0CCA\u0C82\u0CA1\u0CBF\u0CB0\u0CC1\u0CB5\u0CC1\u0CA6\u0CC1 1. \u0CA6\u0CC8\u0CA8\u0C82\u0CA6\u0CBF\u0CA8 \u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CC6\u0CAF\u0CB2\u0CCD\u0CB2\u0CBF \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1 \u0CB8\u0CC7\u0CB0\u0CCD\u0CAA\u0CA1\u0CC6, 2. \u0C86\u0CAF\u0CCD\u0C95\u0CC6 \u0CAE\u0CBE\u0CA1\u0CBF\u0CA6 \u0CA6\u0CBF\u0CA8\u0CBE\u0C82\u0C95\u0C97\u0CB3\u0CB2\u0CCD\u0CB2\u0CBF \u0CB5\u0CBF\u0CB6\u0CC7\u0CB7 \u0CAA\u0CC2\u0C9C\u0CC6/\u0C85\u0CB0\u0CCD\u0C9A\u0CA8\u0CC6 \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CAA\u0CCD\u0CB0\u0CB8\u0CBE\u0CA6 \u0CB5\u0CBF\u0CA4\u0CB0\u0CA3\u0CC6, 3. \u0CB9\u0CCB\u0CAE \u0C85\u0CA5\u0CB5\u0CBE \u0CB5\u0CBF\u0CB6\u0CC7\u0CB7 \u0CAA\u0CC2\u0C9C\u0CC6\u0CAF\u0CB2\u0CCD\u0CB2\u0CBF \u0CAD\u0CBE\u0C97\u0CB5\u0CB9\u0CBF\u0CB8\u0CB2\u0CC1 \u0CB5\u0CBE\u0CB0\u0CCD\u0CB7\u0CBF\u0C95 \u0C85\u0CB5\u0C95\u0CBE\u0CB6, 4. \u0CB9\u0CAC\u0CCD\u0CAC \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 \u0CAA\u0CC2\u0C9C\u0CC6 \u0CB8\u0CC2\u0C9A\u0CA8\u0CC6\u0C97\u0CB3\u0CC1 (\u0CB8\u0CC2\u0C9A\u0CA8\u0CC6 \u0CAE\u0CBE\u0CA4\u0CCD\u0CB0), 5. \u0CA6\u0CC7\u0CB5\u0CB8\u0CCD\u0CA5\u0CBE\u0CA8\u0CA6\u0CBF\u0C82\u0CA6 \u0CB5\u0CBF\u0CB6\u0CC7\u0CB7 \u0C86\u0CB6\u0CC0\u0CB0\u0CCD\u0CB5\u0CBE\u0CA6 \u0CAA\u0CA4\u0CCD\u0CB0, \u0CAE\u0CA4\u0CCD\u0CA4\u0CC1 6. \u0CA1\u0CBF\u0C9C\u0CBF\u0C9F\u0CB2\u0CCD \u0CB8\u0CA6\u0CB8\u0CCD\u0CAF\u0CA4\u0CCD\u0CB5 \u0CAA\u0CCD\u0CB0\u0CAE\u0CBE\u0CA3\u0CAA\u0CA4\u0CCD\u0CB0.',
+    // ಸೂಚನೆ: ಶಾಶ್ವತ ಸೇವಾ ಸದಸ್ಯತ್ವವು ಒಳಗೊಂಡಿರುವುದು 1. ದೈನಂದಿನ ಅರ್ಚನೆಯಲ್ಲಿ ಹೆಸರು ಸೇರ್ಪಡೆ, 2. ಆಯ್ಕೆ ಮಾಡಿದ ದಿನಾಂಕಗಳಲ್ಲಿ ವಿಶೇಷ ಪೂಜೆ/ಅರ್ಚನೆ ಮತ್ತು ಪ್ರಸಾದ ವಿತರಣೆ, 3. ಹೋಮ ಅಥವಾ ವಿಶೇಷ ಪೂಜೆಯಲ್ಲಿ ಭಾಗವಹಿಸಲು ವಾರ್ಷಿಕ ಅವಕಾಶ, 4. ಹಬ್ಬ ಮತ್ತು ಪೂಜೆ ಸೂಚನೆಗಳು (ಸೂಚನೆ ಮಾತ್ರ), 5. ದೇವಸ್ಥಾನದಿಂದ ವಿಶೇಷ ಆಶೀರ್ವಾದ ಪತ್ರ, ಮತ್ತು 6. ಡಿಜಿಟಲ್ ಸದಸ್ಯತ್ವ ಪ್ರಮಾಣಪತ್ರ.
+    custom: '',
+  };
+  return n[pt] || '';
+}
+
 // ======================================================================
 //  Shared drawing functions
 // ======================================================================
 
-/** Draw the watermark background */
+/** Draw full-page background image (includes header + watermark) */
+function drawBackground(doc) {
+  try {
+    if (fs.existsSync(RECEIPT_BG_PATH)) {
+      doc.image(RECEIPT_BG_PATH, 0, 0, { width: PAGE_W, height: PAGE_H });
+      return true; // background drawn successfully
+    }
+  } catch (_) { /* fallback to manual drawing */ }
+  return false;
+}
+
+/** Draw the watermark background (fallback when no background image) */
 function drawWatermark(doc) {
   try {
     if (fs.existsSync(WATERMARK_PATH)) {
@@ -85,7 +142,7 @@ function drawWatermark(doc) {
   } catch (_) { /* optional */ }
 }
 
-/** Draw the common saffron header bar with logo, temple name, address */
+/** Draw the common saffron header bar with logo, temple name, address (fallback when no background image) */
 function drawHeader(doc, hasKannadaFont, logoEndX) {
   // Header background
   doc.rect(0, 0, PAGE_W, 82).fill('#FFF3E0');
@@ -127,11 +184,15 @@ function drawHeader(doc, hasKannadaFont, logoEndX) {
     .text('Website: www.samrajyalakshmitemple.org | Email: samrajyalakshmitemple@gmail.com', logoEndX, subY + 22, { width: PAGE_W - logoEndX - 160, align: 'center', underline: true });
 }
 
-/** Draw payment method checkboxes with green tick */
-function drawPaymentCheckboxes(doc, currentY, selectedMethod, labels) {
-  doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold')
+/** Draw payment method checkboxes with green tick. Optional fontOverride for Kannada rendering. */
+function drawPaymentCheckboxes(doc, currentY, selectedMethod, labels, fontOverride) {
+  const labelBoldFont = fontOverride || 'Helvetica-Bold';
+  const labelNormalFont = fontOverride || 'Helvetica';
+
+  doc.fontSize(10).fillColor('#000000').font(labelBoldFont)
     .text(labels.modeLabel + ' ', LEFT, currentY, { continued: false });
 
+  doc.font(labelBoldFont).fontSize(10);
   let pmX = LEFT + doc.widthOfString(labels.modeLabel + ' ') + 5;
   labels.methods.forEach((pm) => {
     const sel = selectedMethod === pm.key;
@@ -146,8 +207,10 @@ function drawPaymentCheckboxes(doc, currentY, selectedMethod, labels) {
     }
     doc.restore();
 
-    doc.fontSize(8.5).font(sel ? 'Helvetica-Bold' : 'Helvetica').fillColor('#000000')
+    const methodFont = sel ? labelBoldFont : labelNormalFont;
+    doc.fontSize(8.5).font(methodFont).fillColor('#000000')
       .text(pm.label, pmX + 13, currentY + 1, { continued: false });
+    doc.font(methodFont).fontSize(8.5);
     pmX += 13 + doc.widthOfString(pm.label) + 12;
   });
 }
@@ -159,14 +222,15 @@ function drawPaymentCheckboxes(doc, currentY, selectedMethod, labels) {
 function drawEnglishPage(doc, data, hasKannadaFont) {
   const logoEndX = fs.existsSync(GODDESS_LOGO_PATH) ? 72 : 45;
 
-  // Watermark
-  drawWatermark(doc);
+  // Try full-page background image first, fallback to manual header + watermark
+  const hasBg = drawBackground(doc);
+  if (!hasBg) {
+    drawWatermark(doc);
+    drawHeader(doc, hasKannadaFont, logoEndX);
+  }
 
-  // Header
-  drawHeader(doc, hasKannadaFont, logoEndX);
-
-  // RECEIPT title
-  let y = 102;
+  // RECEIPT title — push down if background image is used (header is taller)
+  let y = hasBg ? 140 : 102;
   doc.fontSize(14).fillColor(MAROON_HEX).font('Helvetica-Bold')
     .text('RECEIPT', 0, y, { width: PAGE_W, align: 'center', underline: true });
 
@@ -227,6 +291,14 @@ function drawEnglishPage(doc, data, hasKannadaFont) {
     .font('Helvetica-Bold').text(sevaName, { continued: true })
     .font('Helvetica').text(' Seva/Temple Activities of Shree Samrajyalakshmi Temple.', { width: CONTENT_W });
 
+  // Seva Note (plan-specific inclusions)
+  const sevaNote = getSevaNote(data.plan_type);
+  if (sevaNote) {
+    y = doc.y + 16;
+    doc.fontSize(8).fillColor(DARK_BROWN_HEX).font('Helvetica-Oblique')
+      .text(sevaNote, LEFT, y, { width: CONTENT_W, lineGap: 2 });
+  }
+
   // Blessing
   y = Math.max(doc.y + 30, 640);
   doc.fontSize(10).fillColor(MAROON_HEX).font('Helvetica-Bold')
@@ -248,14 +320,15 @@ function drawKannadaPage(doc, data, hasKannadaFont) {
   const logoEndX = fs.existsSync(GODDESS_LOGO_PATH) ? 72 : 45;
   const KF = hasKannadaFont ? 'Kannada' : 'Helvetica-Bold';
 
-  // Watermark
-  drawWatermark(doc);
+  // Try full-page background image first, fallback to manual header + watermark
+  const hasBg = drawBackground(doc);
+  if (!hasBg) {
+    drawWatermark(doc);
+    drawHeader(doc, hasKannadaFont, logoEndX);
+  }
 
-  // Header (same bilingual header)
-  drawHeader(doc, hasKannadaFont, logoEndX);
-
-  // ರಶೀದಿ title
-  let y = 102;
+  // ರಶೀದಿ title — push down if background image is used
+  let y = hasBg ? 140 : 102;
   if (hasKannadaFont) {
     doc.fontSize(14).fillColor(MAROON_HEX).font(KF)
       .text('\u0CB0\u0CB6\u0CC0\u0CA6\u0CBF', 0, y, { width: PAGE_W, align: 'center', underline: true });
@@ -323,39 +396,77 @@ function drawKannadaPage(doc, data, hasKannadaFont) {
       .text('Transaction Reference No: ', LEFT, y, { continued: true }).font('Helvetica').text(data.transaction_id || 'N/A');
   }
 
-  // ಪಾವತಿ ವಿಧಾನ / Mode of Payment — use English labels for consistent rendering
+  // ಪಾವತಿ ವಿಧಾನ / Mode of Payment
   y += 24;
-  drawPaymentCheckboxes(doc, y, data.payment_method, {
-    modeLabel: 'Mode of Payment:',
-    methods: [
-      { key: 'cash', label: 'Cash' }, { key: 'upi', label: 'UPI' },
-      { key: 'debit_card', label: 'Debit/Credit Card' }, { key: 'direct_transfer', label: 'Bank Transfer' },
-      { key: 'cheque_dd', label: 'Cheque/DD' },
-    ],
-  });
+  if (hasKannadaFont) {
+    drawPaymentCheckboxes(doc, y, data.payment_method, {
+      modeLabel: '\u0CAA\u0CBE\u0CB5\u0CA4\u0CBF \u0CB5\u0CBF\u0CA7\u0CBE\u0CA8:', // ಪಾವತಿ ವಿಧಾನ:
+      methods: [
+        { key: 'cash', label: '\u0CA8\u0C97\u0CA6\u0CC1' },           // ನಗದು
+        { key: 'upi', label: '\u0CAF\u0CC1\u0CAA\u0CBF\u0C90' },     // ಯುಪಿಐ
+        { key: 'debit_card', label: '\u0CA1\u0CC6\u0CAC\u0CBF\u0C9F\u0CCD/\u0C95\u0CCD\u0CB0\u0CC6\u0CA1\u0CBF\u0C9F\u0CCD \u0C95\u0CBE\u0CB0\u0CCD\u0CA1\u0CCD' }, // ಡೆಬಿಟ್/ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್
+        { key: 'direct_transfer', label: '\u0CAC\u0CCD\u0CAF\u0CBE\u0C82\u0C95\u0CCD \u0CB5\u0CB0\u0CCD\u0C97\u0CBE\u0CB5\u0CA3\u0CC6' }, // ಬ್ಯಾಂಕ್ ವರ್ಗಾವಣೆ
+        { key: 'cheque_dd', label: '\u0C9A\u0CC6\u0C95\u0CCD/\u0CA1\u0CBF\u0CA1\u0CBF' },    // ಚೆಕ್/ಡಿಡಿ
+      ],
+    }, KF);
+  } else {
+    drawPaymentCheckboxes(doc, y, data.payment_method, {
+      modeLabel: 'Mode of Payment:',
+      methods: [
+        { key: 'cash', label: 'Cash' }, { key: 'upi', label: 'UPI' },
+        { key: 'debit_card', label: 'Debit/Credit Card' }, { key: 'direct_transfer', label: 'Bank Transfer' },
+        { key: 'cheque_dd', label: 'Cheque/DD' },
+      ],
+    });
+  }
 
-  // Amount
+  // ಮೊತ್ತ / Amount
   y += 28;
   const amt = Number(data.amount);
+  const sevaNameKn = hasKannadaFont ? (getPlanDisplayNameKannada(data.plan_type) || data.plan_name || getPlanDisplayName(data.plan_type)) : null;
   const sevaName = data.plan_name || getPlanDisplayName(data.plan_type);
 
-  // Amount label in Kannada, value in English — rendered separately to avoid font mixing
-  doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold')
-    .text('Amount: ', LEFT, y, { continued: true })
-    .font('Helvetica')
-    .text(`Rs. ${amt.toLocaleString('en-IN')}  (In words: ${numberToWords(amt)} Rupees only)`, { width: CONTENT_W });
+  if (hasKannadaFont) {
+    // ಮೊತ್ತ: ರೂ. X,XXX (ಅಕ್ಷರಗಳಲ್ಲಿ: ... ರೂಪಾಯಿಗಳು ಮಾತ್ರ)
+    doc.fontSize(10).fillColor('#000000').font(KF)
+      .text('\u0CAE\u0CCA\u0CA4\u0CCD\u0CA4: ', LEFT, y, { continued: true }) // ಮೊತ್ತ:
+      .text('\u0CB0\u0CC2. ' + amt.toLocaleString('en-IN') + '  (\u0C85\u0C95\u0CCD\u0CB7\u0CB0\u0C97\u0CB3\u0CB2\u0CCD\u0CB2\u0CBF: ' + numberToKannadaWords(amt) + ' \u0CB0\u0CC2\u0CAA\u0CBE\u0CAF\u0CBF\u0C97\u0CB3\u0CC1 \u0CAE\u0CBE\u0CA4\u0CCD\u0CB0)', { width: CONTENT_W });
+      // ರೂ. ... (ಅಕ್ಷರಗಳಲ್ಲಿ: ... ರೂಪಾಯಿಗಳು ಮಾತ್ರ)
+  } else {
+    doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold')
+      .text('Amount: ', LEFT, y, { continued: true })
+      .font('Helvetica')
+      .text(`Rs. ${amt.toLocaleString('en-IN')}  (In words: ${numberToWords(amt)} Rupees only)`, { width: CONTENT_W });
+  }
 
   // Contribution text — Kannada paragraph
   y += 18;
   if (hasKannadaFont) {
     doc.fontSize(10).font(KF).fillColor('#000000')
-      .text(sevaName + ' \u0CB6\u0CCD\u0CB0\u0CC0 \u0CB8\u0CBE\u0CAE\u0CCD\u0CB0\u0CBE\u0C9C\u0CCD\u0CAF\u0CB2\u0C95\u0CCD\u0CB7\u0CCD\u0CAE\u0CBF \u0CA6\u0CC7\u0CB5\u0CB8\u0CCD\u0CA5\u0CBE\u0CA8\u0CA6 \u0CB8\u0CC7\u0CB5\u0CC6/\u0CA6\u0CC7\u0CB5\u0CBE\u0CB2\u0CAF \u0C9A\u0C9F\u0CC1\u0CB5\u0C9F\u0CBF\u0C95\u0CC6\u0C97\u0CB3\u0CBF\u0C97\u0CC6 \u0CB8\u0CCD\u0CB5\u0CAF\u0C82\u0CAA\u0CCD\u0CB0\u0CC7\u0CB0\u0CBF\u0CA4 \u0CAD\u0C95\u0CCD\u0CA4\u0CBF \u0C95\u0CCA\u0CA1\u0CC1\u0C97\u0CC6\u0CAF\u0CBE\u0C97\u0CBF \u0CB8\u0CCD\u0CB5\u0CC0\u0C95\u0CB0\u0CBF\u0CB8\u0CB2\u0CBE\u0C97\u0CBF\u0CA6\u0CC6.',
+      .text(sevaNameKn + ' \u0CB6\u0CCD\u0CB0\u0CC0 \u0CB8\u0CBE\u0CAE\u0CCD\u0CB0\u0CBE\u0C9C\u0CCD\u0CAF\u0CB2\u0C95\u0CCD\u0CB7\u0CCD\u0CAE\u0CBF \u0CA6\u0CC7\u0CB5\u0CB8\u0CCD\u0CA5\u0CBE\u0CA8\u0CA6 \u0CB8\u0CC7\u0CB5\u0CC6/\u0CA6\u0CC7\u0CB5\u0CBE\u0CB2\u0CAF \u0C9A\u0C9F\u0CC1\u0CB5\u0C9F\u0CBF\u0C95\u0CC6\u0C97\u0CB3\u0CBF\u0C97\u0CC6 \u0CB8\u0CCD\u0CB5\u0CAF\u0C82\u0CAA\u0CCD\u0CB0\u0CC7\u0CB0\u0CBF\u0CA4 \u0CAD\u0C95\u0CCD\u0CA4\u0CBF \u0C95\u0CCA\u0CA1\u0CC1\u0C97\u0CC6\u0CAF\u0CBE\u0C97\u0CBF \u0CB8\u0CCD\u0CB5\u0CC0\u0C95\u0CB0\u0CBF\u0CB8\u0CB2\u0CBE\u0C97\u0CBF\u0CA6\u0CC6.',
         LEFT, y, { width: CONTENT_W });
   } else {
     doc.fontSize(10).font('Helvetica')
       .text('is received as a voluntary devotional contribution towards ', LEFT, y, { continued: true, width: CONTENT_W })
       .font('Helvetica-Bold').text(sevaName, { continued: true })
       .font('Helvetica').text(' Seva/Temple Activities of Shree Samrajyalakshmi Temple.', { width: CONTENT_W });
+  }
+
+  // Seva Note (plan-specific inclusions) — Kannada note on Kannada page
+  if (hasKannadaFont) {
+    const sevaNoteKn = getSevaNoteKannada(data.plan_type);
+    if (sevaNoteKn) {
+      y = doc.y + 16;
+      doc.fontSize(8).fillColor(DARK_BROWN_HEX).font(KF)
+        .text(sevaNoteKn, LEFT, y, { width: CONTENT_W, lineGap: 2 });
+    }
+  } else {
+    const sevaNote = getSevaNote(data.plan_type);
+    if (sevaNote) {
+      y = doc.y + 16;
+      doc.fontSize(8).fillColor(DARK_BROWN_HEX).font('Helvetica-Oblique')
+        .text(sevaNote, LEFT, y, { width: CONTENT_W, lineGap: 2 });
+    }
   }
 
   // Blessing in Kannada

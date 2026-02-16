@@ -7,6 +7,7 @@ import {
   adminCreateEntry,
   markCashReceived,
   updatePayment,
+  adminDeleteEntry,
   adminResendReceipt,
   adminDownloadReceipt,
   exportPayments,
@@ -274,6 +275,18 @@ export default function Admin() {
       setActionMsg({ type: 'success', text: 'CSV exported successfully with all transaction data.' });
     } catch (err) {
       setActionMsg({ type: 'error', text: 'Export failed: ' + err.message });
+    }
+  };
+
+  const handleDeleteEntry = async (paymentId, devoteName, txnId) => {
+    if (!window.confirm(`⚠️ Are you sure you want to DELETE this entry?\n\nDevotee: ${devoteName}\nTxn ID: ${txnId}\n\nThis action cannot be undone.`)) return;
+    try {
+      await adminDeleteEntry(paymentId);
+      setActionMsg({ type: 'success', text: `🗑️ Entry for "${devoteName}" (${txnId}) deleted successfully.` });
+      loadPayments();
+      loadDashboard();
+    } catch (err) {
+      setActionMsg({ type: 'error', text: err.message });
     }
   };
 
@@ -690,6 +703,10 @@ export default function Admin() {
                                 ✅
                               </button>
                             )}
+                            <button className="action-btn action-btn-delete" title="Delete Entry"
+                              onClick={() => handleDeleteEntry(p.id, p.full_name, p.transaction_id)}>
+                              🗑️
+                            </button>
                           </div>
                         </td>
                       </tr>

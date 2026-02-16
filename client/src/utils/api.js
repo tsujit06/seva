@@ -95,6 +95,14 @@ export async function updatePayment(paymentId, data) {
   });
 }
 
+/** Delete a payment entry */
+export async function adminDeleteEntry(paymentId) {
+  return request(`/admin/payments/${paymentId}/delete`, {
+    method: 'DELETE',
+    headers: getAdminHeaders(),
+  });
+}
+
 /** Admin resend receipt email */
 export async function adminResendReceipt(paymentId) {
   return request(`/admin/payments/${paymentId}/resend-receipt`, {

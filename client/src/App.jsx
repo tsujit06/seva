@@ -40,14 +40,17 @@ function Header() {
 function Footer() {
   return (
     <footer className="temple-footer">
-      <div className="footer-om">ॐ</div>
+      <img src="/goddess-logo.png" alt="Shree Samrajyalakshmi" className="footer-logo-img" />
       <div className="footer-temple-name-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
       <div className="footer-temple-name">SHREE SAMRAJYALAKSHMI TEMPLE</div>
       <div className="footer-text">
         Thonachagondanahalli Village, Madhugiri Taluk, Karnataka (Bharat) - 572112
       </div>
       <div className="footer-text" style={{ fontSize: 12, marginTop: 4 }}>
-        Website: www.samrajyalakshmitemple.org | Email: samrajyalakshmitemple@gmail.com
+        Website: www.samrajyalakshmitemple.org
+      </div>
+      <div className="footer-text" style={{ fontSize: 12, marginTop: 4 }}>
+        Email: samrajyalakshmitemple@gmail.com
       </div>
       <div className="footer-blessing">
         "Om Samrajyalakshmiyai Namaha — May the Goddess bless all devotees with eternal prosperity"

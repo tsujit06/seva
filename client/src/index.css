@@ -208,10 +208,15 @@ a:hover {
   margin-top: 60px;
 }
 
-.footer-om {
-  font-size: 28px;
-  color: var(--gold-accent);
-  margin-bottom: 8px;
+.footer-logo-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.4), 0 0 4px rgba(255, 215, 0, 0.3);
+  background: var(--cream);
+  margin-bottom: 10px;
 }
 
 .footer-temple-name-kannada {
@@ -260,13 +265,15 @@ a:hover {
   background: linear-gradient(180deg, rgba(139, 26, 26, 0.06) 0%, transparent 100%);
 }
 
-.hero-om {
-  font-size: 52px;
-  color: var(--saffron);
-  font-family: var(--font-devanagari);
-  line-height: 1;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 8px rgba(232, 112, 10, 0.2);
+.hero-goddess-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 20px rgba(201, 162, 39, 0.3), 0 4px 12px rgba(139, 26, 26, 0.15);
+  background: var(--cream);
 }
 
 .hero-title {
@@ -1041,6 +1048,15 @@ a:hover {
 
 .action-btn-cash:hover:not(:disabled) {
   background: #C8E6C9;
+}
+
+.action-btn-delete {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.action-btn-delete:hover:not(:disabled) {
+  background: #FFCDD2;
 }
 
 /* Manual receipt form */

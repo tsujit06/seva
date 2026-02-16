@@ -160,6 +160,34 @@ class TempleDB {
     }
   }
 
+  // ===== DELETE ENTRY =====
+
+  deleteEntry(paymentId) {
+    const payment = this.getPayment(paymentId);
+    if (!payment) return false;
+
+    const membershipId = payment.membership_id;
+    const memberId = payment.member_id;
+
+    // Remove payment
+    this.data.payments = this.data.payments.filter((p) => p.id !== paymentId);
+
+    // Remove membership if no other payments reference it
+    const otherPayments = this.data.payments.filter((p) => p.membership_id === membershipId);
+    if (otherPayments.length === 0) {
+      this.data.memberships = this.data.memberships.filter((m) => m.id !== membershipId);
+    }
+
+    // Remove member if no other memberships reference them
+    const otherMemberships = this.data.memberships.filter((m) => m.member_id === memberId);
+    if (otherMemberships.length === 0) {
+      this.data.members = this.data.members.filter((m) => m.id !== memberId);
+    }
+
+    this._save();
+    return true;
+  }
+
   // ===== ADMIN QUERIES =====
 
   getDashboardStats() {

@@ -95,7 +95,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="hero-section">
-        <div className="hero-om">ॐ</div>
+        <img src="/goddess-logo.png" alt="Goddess Samrajyalakshmi" className="hero-goddess-img" />
         <h1 className="hero-title">DEVOTEE SEVA MEMBERSHIP</h1>
         <hr className="hero-divider" />
         <p className="hero-subtitle">
@@ -121,7 +121,6 @@ export default function Home() {
 
         {/* Custom Donation info */}
         <div className="custom-donation-card">
-          <div className="plan-icon">💝</div>
           <h3 className="plan-name" style={{ marginBottom: 8 }}>Custom Seva / Donation</h3>
           <p className="plan-description" style={{ maxWidth: 500, margin: '0 auto 16px' }}>
             Make a custom donation or sponsor a specific seva. Please contact the temple administration 
