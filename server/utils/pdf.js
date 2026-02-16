@@ -251,15 +251,17 @@ function drawEnglishPage(doc, data, hasKannadaFont) {
   function field(label, val, fy) {
     doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold').text(label, LEFT, fy);
     doc.fontSize(10).font('Helvetica').text(val || '\u2014', vx, fy, { width: CONTENT_W - 135 });
+    // Return the bottom Y so we can handle multi-line wrapping
+    return Math.max(fy + 14, doc.y);
   }
 
-  field('Devotee Name:', data.full_name, y); y += 18;
-  field('Gotra:', data.gotra, y); y += 18;
-  field('Nakshatra:', data.nakshatra, y); y += 18;
+  y = field('Devotee Name:', data.full_name, y) + 4;
+  y = field('Gotra:', data.gotra, y) + 4;
+  y = field('Nakshatra:', data.nakshatra, y) + 4;
   const addr = [data.address, data.city, data.state, data.pincode].filter(Boolean).join(', ');
-  field('Address:', addr, y); y += 18;
-  field('Mobile No:', data.phone, y); y += 18;
-  field('Email ID:', data.email, y); y += 18;
+  y = field('Address:', addr, y) + 4;
+  y = field('Mobile No:', data.phone, y) + 4;
+  y = field('Email ID:', data.email, y) + 4;
 
   // Transaction Reference
   y += 6;
@@ -369,21 +371,23 @@ function drawKannadaPage(doc, data, hasKannadaFont) {
     const label = hasKannadaFont ? kanLabel : engLabel;
     doc.fontSize(10).fillColor('#000000').font(hasKannadaFont ? KF : 'Helvetica-Bold').text(label, LEFT, fy);
     doc.fontSize(10).font('Helvetica').text(val || '\u2014', vx, fy, { width: CONTENT_W - 155 });
+    // Return the bottom Y so we can handle multi-line wrapping
+    return Math.max(fy + 14, doc.y);
   }
 
   // ಭಕ್ತರ ಹೆಸರು / Devotee Name
-  kField('\u0CAD\u0C95\u0CCD\u0CA4\u0CB0 \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1:', 'Devotee Name:', data.full_name, y); y += 18;
+  y = kField('\u0CAD\u0C95\u0CCD\u0CA4\u0CB0 \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1:', 'Devotee Name:', data.full_name, y) + 4;
   // ಗೋತ್ರ / Gotra
-  kField('\u0C97\u0CCB\u0CA4\u0CCD\u0CB0:', 'Gotra:', data.gotra, y); y += 18;
+  y = kField('\u0C97\u0CCB\u0CA4\u0CCD\u0CB0:', 'Gotra:', data.gotra, y) + 4;
   // ನಕ್ಷತ್ರ / Nakshatra
-  kField('\u0CA8\u0C95\u0CCD\u0CB7\u0CA4\u0CCD\u0CB0:', 'Nakshatra:', data.nakshatra, y); y += 18;
+  y = kField('\u0CA8\u0C95\u0CCD\u0CB7\u0CA4\u0CCD\u0CB0:', 'Nakshatra:', data.nakshatra, y) + 4;
   // ವಿಳಾಸ / Address
   const addr = [data.address, data.city, data.state, data.pincode].filter(Boolean).join(', ');
-  kField('\u0CB5\u0CBF\u0CB3\u0CBE\u0CB8:', 'Address:', addr, y); y += 18;
+  y = kField('\u0CB5\u0CBF\u0CB3\u0CBE\u0CB8:', 'Address:', addr, y) + 4;
   // ಮೊಬೈಲ್ ಸಂಖ್ಯೆ / Mobile No
-  kField('\u0CAE\u0CCA\u0CAC\u0CC8\u0CB2\u0CCD \u0CB8\u0C82\u0C96\u0CCD\u0CAF\u0CC6:', 'Mobile No:', data.phone, y); y += 18;
+  y = kField('\u0CAE\u0CCA\u0CAC\u0CC8\u0CB2\u0CCD \u0CB8\u0C82\u0C96\u0CCD\u0CAF\u0CC6:', 'Mobile No:', data.phone, y) + 4;
   // ಇಮೇಲ್ ಐಡಿ / Email ID
-  kField('\u0C87\u0CAE\u0CC7\u0CB2\u0CCD \u0C90\u0CA1\u0CBF:', 'Email ID:', data.email, y); y += 18;
+  y = kField('\u0C87\u0CAE\u0CC7\u0CB2\u0CCD \u0C90\u0CA1\u0CBF:', 'Email ID:', data.email, y) + 4;
 
   // ವ್ಯವಹಾರ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ / Transaction Reference No
   y += 6;
