@@ -1,29 +1,16 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-let transporter = null;
+let resendClient = null;
 
-function getTransporter() {
-  if (!transporter) {
-    const smtpPort = parseInt(process.env.SMTP_PORT || '465');
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: smtpPort,
-      secure: smtpPort === 465, // true for 465 (direct SSL), false for 587 (STARTTLS)
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      // --- Timeout settings to avoid indefinite hangs ---
-      connectionTimeout: 10000,  // 10s to establish TCP connection
-      greetingTimeout: 10000,    // 10s for SMTP greeting
-      socketTimeout: 15000,      // 15s for socket inactivity
-      // --- Connection pool for reuse ---
-      pool: true,
-      maxConnections: 3,
-      maxMessages: 50,
-    });
+function getResend() {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY environment variable is not set. Sign up at https://resend.com to get a free API key.');
+    }
+    resendClient = new Resend(apiKey);
   }
-  return transporter;
+  return resendClient;
 }
 
 /**
@@ -77,49 +64,46 @@ function buildReceiptHTML(recipientName, transactionId) {
 }
 
 /**
- * Send receipt email with PDF attachment (with retry)
+ * Send receipt email with PDF attachment via Resend HTTP API.
+ * This uses HTTP (not SMTP), so it works on Render and all cloud platforms.
  */
 async function sendReceiptEmail(recipientEmail, recipientName, transactionId, pdfBuffer) {
   const MAX_RETRIES = 2;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const transport = getTransporter();
+      const resend = getResend();
 
-      const mailOptions = {
-        from: process.env.SMTP_FROM || '"Shree Samrajyalakshmi Temple" <noreply@temple.org>',
-        to: recipientEmail,
+      const fromAddress = process.env.EMAIL_FROM || 'Shree Samrajyalakshmi Temple <noreply@samrajyalakshmitemple.org>';
+
+      const { data, error } = await resend.emails.send({
+        from: fromAddress,
+        to: [recipientEmail],
         subject: `Seva Receipt - ${transactionId} | Shree Samrajyalakshmi Temple`,
         html: buildReceiptHTML(recipientName, transactionId),
         attachments: [
           {
             filename: `SevaReceipt-${transactionId}.pdf`,
-            content: pdfBuffer,
-            contentType: 'application/pdf',
+            content: pdfBuffer.toString('base64'),
           },
         ],
-      };
+      });
 
-      const info = await transport.sendMail(mailOptions);
-      console.log(`✅ Receipt email sent to ${recipientEmail}: ${info.messageId}`);
-      return { success: true, messageId: info.messageId };
+      if (error) {
+        throw new Error(error.message || JSON.stringify(error));
+      }
+
+      console.log(`✅ Receipt email sent to ${recipientEmail} via Resend: ${data?.id}`);
+      return { success: true, messageId: data?.id };
     } catch (error) {
       console.error(`❌ Email attempt ${attempt}/${MAX_RETRIES} failed:`, error.message);
-
-      // If connection failed, destroy the cached transporter so next attempt creates a fresh one
-      if (error.code === 'ESOCKET' || error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
-        if (transporter) {
-          transporter.close();
-          transporter = null;
-        }
-      }
 
       if (attempt === MAX_RETRIES) {
         return { success: false, error: error.message };
       }
 
       // Brief pause before retry
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise(r => setTimeout(r, 1500));
     }
   }
 }
