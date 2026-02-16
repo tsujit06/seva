@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { generateReceipt } = require('../utils/pdf');
-const { sendReceiptEmail } = require('../utils/email');
+const { sendReceiptEmail, sendReceiptEmailAsync } = require('../utils/email');
 const { SEVA_PLANS } = require('../utils/plans');
 
 /**
@@ -86,17 +86,26 @@ router.post('/payments/:id/resend-receipt', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Payment not found.' });
     }
 
+    if (!payment.email) {
+      return res.status(400).json({ success: false, error: 'No email address on file for this devotee.' });
+    }
+
     const pdfBuffer = await generateReceipt(payment);
-    const emailResult = await sendReceiptEmail(
-      payment.email, payment.full_name, payment.transaction_id, pdfBuffer
+
+    // Fire-and-forget: respond immediately, send email in background
+    sendReceiptEmailAsync(
+      payment.email, payment.full_name, payment.transaction_id, pdfBuffer,
+      (result) => {
+        if (result.success) {
+          db.updatePayment(payment.id, { receipt_email_sent: 1 });
+          console.log(`✅ Background receipt email sent to ${payment.email}`);
+        } else {
+          console.error(`❌ Background receipt email failed for ${payment.email}: ${result.error}`);
+        }
+      }
     );
 
-    if (emailResult.success) {
-      db.updatePayment(payment.id, { receipt_email_sent: 1 });
-      res.json({ success: true, message: `Receipt resent to ${payment.email}` });
-    } else {
-      res.json({ success: false, error: `Email failed: ${emailResult.error}` });
-    }
+    res.json({ success: true, message: `Receipt is being sent to ${payment.email}. You will see a log when it completes.` });
   } catch (error) {
     console.error('Resend receipt error:', error);
     res.status(500).json({ success: false, error: 'Failed to resend receipt.' });
