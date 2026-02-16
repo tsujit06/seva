@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: seva
+    runtime: node
+    buildCommand: npm install && npm run install:client && npm run build:client
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
