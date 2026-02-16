@@ -40,7 +40,6 @@ function Header() {
 function Footer() {
   return (
     <footer className="temple-footer">
-      <img src="/goddess-logo.png" alt="Shree Samrajyalakshmi" className="footer-logo-img" />
       <div className="footer-temple-name-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
       <div className="footer-temple-name">SHREE SAMRAJYALAKSHMI TEMPLE</div>
       <div className="footer-text">

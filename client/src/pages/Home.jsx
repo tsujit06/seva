@@ -95,7 +95,6 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="hero-section">
-        <img src="/goddess-logo.png" alt="Goddess Samrajyalakshmi" className="hero-goddess-img" />
         <h1 className="hero-title">DEVOTEE SEVA MEMBERSHIP</h1>
         <hr className="hero-divider" />
         <p className="hero-subtitle">
