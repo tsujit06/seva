@@ -36,6 +36,36 @@ const PLAN_NAMES = {
   custom: 'Custom Seva / Donation',
 };
 
+const PLAN_BENEFITS = {
+  archana: [
+    'Name included in monthly Archana & Sankalpa',
+    'Festival & puja notifications (Notification only)',
+    'Digital membership certificate',
+  ],
+  sahasranama: [
+    'Name included in monthly Archana & Sankalpa',
+    'Prasadam on Temple visit',
+    "Naivedya offered to the Goddess on a specific day in devotee's name",
+    'Festival & puja notifications (Notification only)',
+    'Digital membership certificate',
+  ],
+  nitya_archana: [
+    'Name included in Daily Archana',
+    'Name included in Annual Special Homam',
+    'Monthly Prasadam Courier',
+    'Festival & puja notifications (Notification only)',
+    'Digital membership certificate',
+  ],
+  saswatha: [
+    'Name included in Daily Archana',
+    'Special pujas / archana and prasadam delivery on selected dates',
+    'Annual opportunity to participate in a Homam or Special Puja',
+    'Festival & puja notifications (Notification only)',
+    'Special Blessings Letter from the Temple',
+    'Digital membership certificate',
+  ],
+};
+
 const PAYMENT_METHODS = [
   { value: 'upi', label: '📱 UPI' },
   { value: 'cash', label: '💵 Cash' },
@@ -455,6 +485,30 @@ export default function Admin() {
                   <div className="input-hint">Amount is fixed for this seva plan</div>
                 )}
               </div>
+
+              {/* Seva Benefits Note */}
+              {PLAN_BENEFITS[form.plan_type] && (
+                <div className="form-group full-width">
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FFF8F0, #FFF3E0)',
+                    border: '1px solid rgba(201, 162, 39, 0.3)',
+                    borderLeft: '4px solid #C9A227',
+                    borderRadius: '0 8px 8px 0',
+                    padding: '14px 18px',
+                  }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#8B1A1A', marginBottom: 8, fontFamily: "'Cinzel', serif" }}>
+                      📜 {PLAN_NAMES[form.plan_type]} Includes:
+                    </div>
+                    <ol style={{ margin: 0, paddingLeft: 20 }}>
+                      {PLAN_BENEFITS[form.plan_type].map((benefit, idx) => (
+                        <li key={idx} style={{ fontSize: 12, color: '#5D3A1A', lineHeight: 1.8, paddingLeft: 4 }}>
+                          {benefit}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </div>
+              )}
               <div className="form-group">
                 <label>Payment Method <span className="required">*</span></label>
                 <select name="payment_method" value={form.payment_method} onChange={handleFormChange}>
