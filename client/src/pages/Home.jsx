@@ -138,9 +138,6 @@ export default function Home() {
           <p style={{ color: '#8B7355', fontSize: 13, marginTop: 16 }}>
             📞 For enrollment, please contact the temple office or visit in person.
           </p>
-          <p style={{ color: '#C9A227', fontFamily: "'Cinzel', serif", marginTop: 16, fontSize: 14, letterSpacing: 1 }}>
-            ॐ श्री सम्राज्यलक्ष्म्यै नमः ॐ
-          </p>
         </div>
       </div>
     </div>
