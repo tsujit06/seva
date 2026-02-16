@@ -1,0 +1,1239 @@
+/* ============================================
+   SHREE SAMRAJYALAKSHMI TEMPLE 
+   Devotee Seva Membership System
+   Temple-Themed Devotional Styles
+   ============================================ */
+
+:root {
+  /* Temple Color Palette */
+  --saffron: #E8700A;
+  --saffron-light: #FF9933;
+  --saffron-dark: #C45800;
+  --maroon: #8B1A1A;
+  --maroon-dark: #5C0E0E;
+  --maroon-light: #A52A2A;
+  --gold: #C9A227;
+  --gold-light: #E8C547;
+  --gold-dark: #A68419;
+  --gold-accent: #FFD700;
+  --cream: #FFF8F0;
+  --cream-dark: #FFF0E0;
+  --warm-white: #FFFAF5;
+  --dark-brown: #5D3A1A;
+  --light-brown: #8B7355;
+  --temple-red: #DC3545;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(139, 26, 26, 0.1);
+  --shadow-md: 0 4px 12px rgba(139, 26, 26, 0.12);
+  --shadow-lg: 0 8px 30px rgba(139, 26, 26, 0.15);
+  --shadow-gold: 0 4px 20px rgba(201, 162, 39, 0.2);
+
+  /* Fonts */
+  --font-heading: 'Cinzel', 'Georgia', serif;
+  --font-body: 'Poppins', 'Segoe UI', sans-serif;
+  --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+  --font-kannada: 'Noto Sans Kannada', sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--cream);
+  color: var(--dark-brown);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle mandala background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, var(--gold) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, var(--maroon) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, var(--saffron) 0.5px, transparent 0.5px);
+  background-size: 60px 60px, 80px 80px, 40px 40px;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+a {
+  color: var(--maroon);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--saffron);
+}
+
+/* ---- Header ---- */
+.temple-header {
+  background: linear-gradient(135deg, var(--maroon-dark), var(--maroon), var(--maroon-dark));
+  color: white;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 20px rgba(92, 14, 14, 0.4);
+}
+
+.header-gold-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold), var(--gold-light), var(--gold-dark));
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-om {
+  font-size: 32px;
+  color: var(--gold-accent);
+  font-family: var(--font-devanagari);
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.header-logo-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.4), 0 0 4px rgba(255, 215, 0, 0.3);
+  background: var(--cream);
+}
+
+.header-title-kannada {
+  font-family: var(--font-kannada);
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFECD2;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+}
+
+.header-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--gold-accent);
+  text-transform: uppercase;
+}
+
+.header-subtitle {
+  font-size: 11px;
+  color: #FFECD2;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.header-nav a, .header-nav button {
+  color: #FFECD2;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.header-nav a:hover, .header-nav button:hover {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--gold-accent);
+}
+
+.header-nav a.active {
+  background: rgba(255, 215, 0, 0.2);
+  color: var(--gold-accent);
+  border-bottom: 2px solid var(--gold);
+}
+
+/* ---- Footer ---- */
+.temple-footer {
+  background: linear-gradient(135deg, var(--maroon-dark), var(--maroon));
+  color: #FFECD2;
+  text-align: center;
+  padding: 28px 24px;
+  margin-top: 60px;
+}
+
+.footer-om {
+  font-size: 28px;
+  color: var(--gold-accent);
+  margin-bottom: 8px;
+}
+
+.footer-temple-name-kannada {
+  font-family: var(--font-kannada);
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFECD2;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.footer-temple-name {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  color: var(--gold-accent);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.footer-text {
+  font-size: 12px;
+  opacity: 0.8;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.footer-blessing {
+  font-style: italic;
+  margin-top: 12px;
+  color: var(--gold-light);
+  font-size: 13px;
+}
+
+/* ---- Page Container ---- */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ---- Hero Section ---- */
+.hero-section {
+  text-align: center;
+  padding: 48px 24px 32px;
+  background: linear-gradient(180deg, rgba(139, 26, 26, 0.06) 0%, transparent 100%);
+}
+
+.hero-om {
+  font-size: 52px;
+  color: var(--saffron);
+  font-family: var(--font-devanagari);
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 8px rgba(232, 112, 10, 0.2);
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  color: var(--maroon);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.hero-subtitle {
+  font-size: 15px;
+  color: var(--light-brown);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.hero-divider {
+  width: 120px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 20px auto;
+  border: none;
+}
+
+/* ---- Section Title ---- */
+.section-title {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.section-title h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--maroon);
+  letter-spacing: 1px;
+}
+
+.section-title p {
+  color: var(--light-brown);
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.section-divider {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 12px auto 0;
+  border: none;
+}
+
+/* ---- Plan Cards Grid ---- */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ---- Plan Card ---- */
+.plan-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--saffron), var(--gold), var(--saffron));
+}
+
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold);
+}
+
+.plan-card.popular {
+  border-color: var(--saffron);
+  box-shadow: var(--shadow-gold);
+}
+
+.plan-card.popular::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--maroon), var(--saffron), var(--gold), var(--saffron), var(--maroon));
+}
+
+.plan-card.premium {
+  background: linear-gradient(180deg, #FFF8F0, white);
+  border-color: var(--gold);
+}
+
+.plan-card.premium::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-accent), var(--gold-dark));
+}
+
+.plan-badge {
+  position: absolute;
+  top: 16px;
+  right: -28px;
+  background: var(--saffron);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 32px;
+  transform: rotate(45deg);
+  letter-spacing: 0.5px;
+}
+
+.plan-badge.premium {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--maroon-dark);
+}
+
+.plan-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.plan-name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  color: var(--maroon);
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.plan-price {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--saffron-dark);
+  margin-bottom: 2px;
+}
+
+.plan-price .currency {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.plan-duration {
+  font-size: 13px;
+  color: var(--light-brown);
+  margin-bottom: 16px;
+}
+
+.plan-description {
+  font-size: 13px;
+  color: #6B5B4D;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex-grow: 0;
+}
+
+.plan-benefits {
+  list-style: none;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.plan-benefits li {
+  font-size: 13px;
+  color: var(--dark-brown);
+  padding: 5px 0;
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.plan-benefits li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 11px;
+}
+
+.plan-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  text-decoration: none;
+}
+
+.plan-btn-primary {
+  background: linear-gradient(135deg, var(--saffron), var(--saffron-dark));
+  color: white;
+}
+
+.plan-btn-primary:hover {
+  background: linear-gradient(135deg, var(--saffron-dark), var(--maroon));
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.plan-btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--maroon-dark);
+}
+
+.plan-btn-gold:hover {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  box-shadow: var(--shadow-gold);
+  color: var(--maroon-dark);
+}
+
+/* ---- Custom Donation Card ---- */
+.custom-donation-card {
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  border: 2px dashed var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.custom-donation-card .plan-icon {
+  font-size: 40px;
+}
+
+/* ---- Forms ---- */
+.form-container {
+  max-width: 680px;
+  margin: 0 auto;
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.form-header h2 {
+  font-family: var(--font-heading);
+  color: var(--maroon);
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.form-header p {
+  color: var(--light-brown);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.form-section-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  color: var(--maroon);
+  letter-spacing: 0.5px;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  margin-top: 24px;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dark-brown);
+  margin-bottom: 5px;
+}
+
+.form-group label .required {
+  color: var(--temple-red);
+  margin-left: 2px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #DDD2C4;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--dark-brown);
+  background: var(--warm-white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group .input-hint {
+  font-size: 11px;
+  color: var(--light-brown);
+  margin-top: 4px;
+}
+
+.form-error {
+  color: var(--temple-red);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Plan summary in form */
+.plan-summary {
+  background: linear-gradient(135deg, var(--cream), var(--cream-dark));
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plan-summary-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--maroon);
+}
+
+.plan-summary-amount {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--saffron-dark);
+}
+
+/* ---- Payment Method Selection ---- */
+.payment-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.payment-method-option {
+  border: 2px solid #E8DED0;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+}
+
+.payment-method-option:hover {
+  border-color: var(--gold);
+  background: var(--cream);
+}
+
+.payment-method-option.selected {
+  border-color: var(--saffron);
+  background: rgba(232, 112, 10, 0.05);
+  box-shadow: 0 0 0 3px rgba(232, 112, 10, 0.1);
+}
+
+.payment-method-icon {
+  font-size: 24px;
+  width: 40px;
+  text-align: center;
+}
+
+.payment-method-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-brown);
+}
+
+.payment-method-radio {
+  display: none;
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--saffron), var(--saffron-dark));
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--saffron-dark), var(--maroon));
+  box-shadow: var(--shadow-md);
+  color: white;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--maroon-dark);
+}
+
+.btn-gold:hover:not(:disabled) {
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-maroon {
+  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+  color: white;
+}
+
+.btn-maroon:hover:not(:disabled) {
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--dark-brown);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--cream);
+  border-color: var(--saffron);
+}
+
+.btn-sm {
+  padding: 7px 16px;
+  font-size: 12px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-icon {
+  font-size: 16px;
+}
+
+/* ---- Receipt Page ---- */
+.receipt-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.receipt-success-banner {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.receipt-success-banner .icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.receipt-success-banner h2 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.receipt-success-banner p {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+.receipt-card {
+  background: white;
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+}
+
+.receipt-detail-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 10px 16px;
+  padding: 16px 0;
+}
+
+.receipt-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--light-brown);
+}
+
+.receipt-value {
+  font-size: 14px;
+  color: var(--dark-brown);
+  font-weight: 500;
+}
+
+.receipt-value.highlight {
+  color: var(--saffron-dark);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.receipt-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.receipt-blessing {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(201, 162, 39, 0.3);
+  font-style: italic;
+  color: var(--maroon);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---- Admin Dashboard ---- */
+.admin-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.admin-login {
+  max-width: 400px;
+  margin: 60px auto;
+  text-align: center;
+}
+
+.admin-login .form-container {
+  margin-top: 24px;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.stat-card .stat-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--maroon);
+}
+
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--light-brown);
+  margin-top: 4px;
+}
+
+.admin-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.admin-toolbar select,
+.admin-toolbar input {
+  padding: 8px 12px;
+  border: 1.5px solid #DDD2C4;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--warm-white);
+  color: var(--dark-brown);
+}
+
+.admin-toolbar select:focus,
+.admin-toolbar input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.admin-table-container {
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table thead {
+  background: linear-gradient(135deg, var(--maroon-dark), var(--maroon));
+}
+
+.admin-table th {
+  color: var(--gold-accent);
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F0E8DC;
+  color: var(--dark-brown);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--cream);
+}
+
+.admin-table .txn-id {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--maroon);
+  font-weight: 600;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-completed {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-pending {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.status-failed {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+/* Action buttons in table */
+.table-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.action-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.action-btn-receipt {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.action-btn-receipt:hover:not(:disabled) {
+  background: #BBDEFB;
+}
+
+.action-btn-email {
+  background: #F3E5F5;
+  color: #7B1FA2;
+}
+
+.action-btn-email:hover:not(:disabled) {
+  background: #E1BEE7;
+}
+
+.action-btn-cash {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.action-btn-cash:hover:not(:disabled) {
+  background: #C8E6C9;
+}
+
+/* Manual receipt form */
+.admin-manual-form {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  margin-top: 24px;
+}
+
+/* ---- Alerts & Messages ---- */
+.alert {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-success {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #C8E6C9;
+}
+
+.alert-error {
+  background: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
+}
+
+.alert-info {
+  background: #E3F2FD;
+  color: #1565C0;
+  border: 1px solid #BBDEFB;
+}
+
+.alert-warning {
+  background: #FFF3E0;
+  color: #E65100;
+  border: 1px solid #FFE0B2;
+}
+
+/* ---- Loading Spinner ---- */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(201, 162, 39, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--saffron);
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px;
+  color: var(--light-brown);
+}
+
+/* ---- Tabs ---- */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid rgba(201, 162, 39, 0.2);
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--light-brown);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: var(--maroon);
+}
+
+.tab-btn.active {
+  color: var(--maroon);
+  border-bottom-color: var(--saffron);
+  font-weight: 600;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 10px 16px;
+  }
+
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-title {
+    font-size: 22px;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .receipt-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+
+  .receipt-label {
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  .receipt-actions {
+    flex-direction: column;
+  }
+
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 16px 12px;
+  }
+
+  .form-container {
+    padding: 20px 16px;
+  }
+
+  .header-title-kannada {
+    font-size: 12px;
+  }
+
+  .header-title {
+    font-size: 13px;
+  }
+
+  .hero-om {
+    font-size: 40px;
+  }
+}
+
+/* ---- Utility ---- */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.flex-gap { display: flex; gap: 12px; align-items: center; }

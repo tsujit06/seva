@@ -1,0 +1,23 @@
+{
+  "name": "shree-samrajyalakshmi-temple-seva",
+  "version": "1.0.0",
+  "description": "Devotee Seva Membership Management System for Shree Samrajyalakshmi Temple",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "cd client && npx vite --host",
+    "install:client": "cd client && npm install",
+    "build:client": "cd client && npx vite build",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "npm run build:client && node server/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "nodemailer": "^6.9.16",
+    "pdfkit": "^0.16.0",
+    "concurrently": "^9.1.2"
+  }
+}

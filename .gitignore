@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.pdf
+client/node_modules/
+server/public/assets/
+server/public/index.html
+server/public/om.svg
+server/public/goddess-logo.png
+data/temple-db.json
