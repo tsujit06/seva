@@ -38,7 +38,7 @@ function buildReceiptHTML(recipientName, transactionId) {
   return `
     <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background: #FFF8F0; border: 2px solid #C9A227; border-radius: 8px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #8B1A1A, #B22222); padding: 24px; text-align: center;">
-        <h1 style="color: #FFD700; margin: 0; font-size: 22px; letter-spacing: 1px;">🙏 Shree Samrajyalakshmi Temple</h1>
+        <h1 style="color: #FFD700; margin: 0; font-size: 22px; letter-spacing: 1px;">Shree Samrajyalakshmi Temple</h1>
         <p style="color: #FFECD2; margin: 8px 0 0; font-size: 13px;">Seva Receipt Confirmation</p>
       </div>
       <div style="padding: 28px 24px;">
@@ -63,7 +63,7 @@ function buildReceiptHTML(recipientName, transactionId) {
         </p>
         <p style="color: #5D3A1A; font-size: 15px; line-height: 1.7; margin-top: 24px;">
           May the Goddess Samrajyalakshmi bless you and your family with 
-          prosperity, health, and eternal peace. 🙏
+          prosperity, health, and eternal peace.
         </p>
         <p style="color: #8B4513; font-size: 14px; margin-top: 24px;">
           With divine blessings,<br/>
