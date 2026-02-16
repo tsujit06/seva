@@ -1,16 +1,34 @@
-const { Resend } = require('resend');
+const { google } = require('googleapis');
 
-let resendClient = null;
+let oauth2Client = null;
+let gmailApi = null;
 
-function getResend() {
-  if (!resendClient) {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error('RESEND_API_KEY environment variable is not set. Sign up at https://resend.com to get a free API key.');
+/**
+ * Initialize the Gmail API client (HTTPS-based, no SMTP).
+ * Requires OAuth2 credentials from Google Cloud Console.
+ */
+function getGmail() {
+  if (!gmailApi) {
+    const clientId = process.env.GMAIL_CLIENT_ID;
+    const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+    const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+
+    if (!clientId || !clientSecret || !refreshToken) {
+      throw new Error(
+        'Gmail API credentials are missing. Set GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, and GMAIL_REFRESH_TOKEN in environment variables.'
+      );
     }
-    resendClient = new Resend(apiKey);
+
+    oauth2Client = new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      'https://developers.google.com/oauthplayground'
+    );
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+    gmailApi = google.gmail({ version: 'v1', auth: oauth2Client });
   }
-  return resendClient;
+  return gmailApi;
 }
 
 /**
@@ -64,45 +82,83 @@ function buildReceiptHTML(recipientName, transactionId) {
 }
 
 /**
- * Send receipt email with PDF attachment via Resend HTTP API.
- * This uses HTTP (not SMTP), so it works on Render and all cloud platforms.
+ * Build a RFC 2822 MIME message with HTML body and PDF attachment,
+ * then base64url-encode it for the Gmail API.
+ */
+function buildRawEmail(from, to, subject, htmlBody, pdfBuffer, pdfFilename) {
+  const boundary = 'boundary_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+
+  const mimeLines = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${Buffer.from(subject).toString('base64')}?=`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    Buffer.from(htmlBody).toString('base64'),
+    '',
+    `--${boundary}`,
+    `Content-Type: application/pdf; name="${pdfFilename}"`,
+    `Content-Disposition: attachment; filename="${pdfFilename}"`,
+    'Content-Transfer-Encoding: base64',
+    '',
+    pdfBuffer.toString('base64'),
+    '',
+    `--${boundary}--`,
+  ];
+
+  const raw = mimeLines.join('\r\n');
+
+  // Gmail API expects base64url encoding (no padding, + → -, / → _)
+  return Buffer.from(raw)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+/**
+ * Send receipt email with PDF attachment via Gmail REST API (HTTPS).
+ * No SMTP required — works on Render and all cloud platforms.
  */
 async function sendReceiptEmail(recipientEmail, recipientName, transactionId, pdfBuffer) {
   const MAX_RETRIES = 2;
+  const gmailUser = process.env.GMAIL_USER || process.env.SMTP_USER;
+  const fromAddress = `Shree Samrajyalakshmi Temple <${gmailUser}>`;
+  const subject = `Seva Receipt - ${transactionId} | Shree Samrajyalakshmi Temple`;
+  const htmlBody = buildReceiptHTML(recipientName, transactionId);
+  const pdfFilename = `SevaReceipt-${transactionId}.pdf`;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const resend = getResend();
+      const gmail = getGmail();
 
-      const fromAddress = process.env.EMAIL_FROM || 'Shree Samrajyalakshmi Temple <noreply@samrajyalakshmitemple.org>';
+      const raw = buildRawEmail(fromAddress, recipientEmail, subject, htmlBody, pdfBuffer, pdfFilename);
 
-      const { data, error } = await resend.emails.send({
-        from: fromAddress,
-        to: [recipientEmail],
-        subject: `Seva Receipt - ${transactionId} | Shree Samrajyalakshmi Temple`,
-        html: buildReceiptHTML(recipientName, transactionId),
-        attachments: [
-          {
-            filename: `SevaReceipt-${transactionId}.pdf`,
-            content: pdfBuffer.toString('base64'),
-          },
-        ],
+      const result = await gmail.users.messages.send({
+        userId: 'me',
+        requestBody: { raw },
       });
 
-      if (error) {
-        throw new Error(error.message || JSON.stringify(error));
-      }
-
-      console.log(`✅ Receipt email sent to ${recipientEmail} via Resend: ${data?.id}`);
-      return { success: true, messageId: data?.id };
+      console.log(`✅ Receipt email sent to ${recipientEmail} via Gmail API: ${result.data.id}`);
+      return { success: true, messageId: result.data.id };
     } catch (error) {
       console.error(`❌ Email attempt ${attempt}/${MAX_RETRIES} failed:`, error.message);
+
+      // If token expired, reset the client so it refreshes on next attempt
+      if (error.code === 401 || error.message?.includes('invalid_grant')) {
+        oauth2Client = null;
+        gmailApi = null;
+      }
 
       if (attempt === MAX_RETRIES) {
         return { success: false, error: error.message };
       }
 
-      // Brief pause before retry
       await new Promise(r => setTimeout(r, 1500));
     }
   }
