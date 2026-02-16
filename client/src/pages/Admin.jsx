@@ -231,8 +231,12 @@ export default function Admin() {
       setForm({ ...EMPTY_FORM });
       loadDashboard();
 
-      // Scroll to top so admin sees the success message
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to top so admin sees the success message (after React re-render)
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 100);
     } catch (err) {
       setActionMsg({ type: 'error', text: err.message });
     } finally {
