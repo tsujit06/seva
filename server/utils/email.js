@@ -73,7 +73,6 @@ function buildReceiptHTML(recipientName, transactionId) {
       <div style="background: #8B1A1A; padding: 16px; text-align: center;">
         <p style="color: #FFECD2; margin: 0; font-size: 12px;">
           ${process.env.TEMPLE_ADDRESS || 'Temple Street, Sacred City'} | 
-          ${process.env.TEMPLE_PHONE || '+91 98765 43210'} |
           ${process.env.TEMPLE_EMAIL || 'info@samrajyalakshmitemple.org'}
         </p>
       </div>
