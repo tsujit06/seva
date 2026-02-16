@@ -117,6 +117,142 @@ function getSevaNoteKannada(pt) {
 }
 
 // ======================================================================
+//  English → Kannada phonetic transliteration
+// ======================================================================
+
+/**
+ * Converts English (Latin) text to approximate Kannada script using
+ * phonetic mapping.  Numbers, punctuation, and already-Kannada text
+ * are preserved unchanged.
+ *
+ * Examples:  Sujith → ಸುಜಿಥ್,  Lakshmi → ಲಕ್ಷ್ಮಿ,  Nandini → ನಂದಿನಿ
+ */
+function transliterateToKannada(text) {
+  if (!text) return '';
+  // Already contains Kannada characters — return as-is
+  if (/[\u0C80-\u0CFF]/.test(text)) return text;
+
+  const VIRAMA = '\u0CCD'; // ್
+
+  // --- Consonant map (longest keys checked first) ---
+  const C = {
+    'ksh': '\u0C95\u0CCD\u0CB7',   // ಕ್ಷ
+    'chh': '\u0C9B',                // ಛ
+    'nch': '\u0C82\u0C9A',          // ಂಚ
+    'jn':  '\u0C9C\u0CCD\u0C9E',   // ಜ್ಞ
+    'gn':  '\u0C9C\u0CCD\u0C9E',   // ಜ್ಞ
+    'kh':  '\u0C96',   // ಖ
+    'gh':  '\u0C98',   // ಘ
+    'ch':  '\u0C9A',   // ಚ
+    'jh':  '\u0C9D',   // ಝ
+    'th':  '\u0CA5',   // ಥ
+    'dh':  '\u0CA7',   // ಧ
+    'ph':  '\u0CAB',   // ಫ
+    'bh':  '\u0CAD',   // ಭ
+    'sh':  '\u0CB6',   // ಶ
+    'nk':  '\u0C82\u0C95', // ಂಕ
+    'ng':  '\u0C82\u0C97', // ಂಗ
+    'nj':  '\u0C82\u0C9C', // ಂಜ
+    'nt':  '\u0C82\u0CA4', // ಂತ
+    'nd':  '\u0C82\u0CA6', // ಂದ
+    'mp':  '\u0C82\u0CAA', // ಂಪ
+    'mb':  '\u0C82\u0CAC', // ಂಬ
+    'k':   '\u0C95',   // ಕ
+    'g':   '\u0C97',   // ಗ
+    'c':   '\u0C9A',   // ಚ
+    'j':   '\u0C9C',   // ಜ
+    't':   '\u0CA4',   // ತ
+    'd':   '\u0CA6',   // ದ
+    'n':   '\u0CA8',   // ನ
+    'p':   '\u0CAA',   // ಪ
+    'f':   '\u0CAB',   // ಫ
+    'b':   '\u0CAC',   // ಬ
+    'm':   '\u0CAE',   // ಮ
+    'y':   '\u0CAF',   // ಯ
+    'r':   '\u0CB0',   // ರ
+    'l':   '\u0CB2',   // ಲ
+    'v':   '\u0CB5',   // ವ
+    'w':   '\u0CB5',   // ವ
+    's':   '\u0CB8',   // ಸ
+    'h':   '\u0CB9',   // ಹ
+    'z':   '\u0C9C',   // ಜ
+    'q':   '\u0C95',   // ಕ
+  };
+
+  // --- Vowel map: [independent form, dependent/matra form] ---
+  const V = {
+    'aa': ['\u0C86', '\u0CBE'],   // ಆ / ಾ
+    'ee': ['\u0C88', '\u0CC0'],   // ಈ / ೀ
+    'ii': ['\u0C88', '\u0CC0'],   // ಈ / ೀ
+    'oo': ['\u0C8A', '\u0CC2'],   // ಊ / ೂ
+    'uu': ['\u0C8A', '\u0CC2'],   // ಊ / ೂ
+    'ai': ['\u0C90', '\u0CC8'],   // ಐ / ೈ
+    'au': ['\u0C94', '\u0CCC'],   // ಔ / ೌ
+    'ou': ['\u0C93', '\u0CCB'],   // ಓ / ೋ
+    'ei': ['\u0C8F', '\u0CC7'],   // ಏ / ೇ
+    'oa': ['\u0C93', '\u0CCB'],   // ಓ / ೋ
+    'a':  ['\u0C85', ''],         // ಅ / (inherent — no matra)
+    'i':  ['\u0C87', '\u0CBF'],   // ಇ / ಿ
+    'u':  ['\u0C89', '\u0CC1'],   // ಉ / ು
+    'e':  ['\u0C8E', '\u0CC6'],   // ಎ / ೆ
+    'o':  ['\u0C92', '\u0CCA'],   // ಒ / ೊ
+  };
+
+  // Pre-sort keys longest-first for greedy matching
+  const cKeys = Object.keys(C).sort((a, b) => b.length - a.length);
+  const vKeys = Object.keys(V).sort((a, b) => b.length - a.length);
+
+  /** Convert a single English word to Kannada script */
+  function convert(word) {
+    const w = word.toLowerCase();
+    let out = '';
+    let i = 0;
+    let ac = false; // after-consonant flag
+
+    while (i < w.length) {
+      let hit = false;
+
+      // 1. Try consonant match (longest key first)
+      for (const k of cKeys) {
+        if (i + k.length <= w.length && w.substring(i, i + k.length) === k) {
+          if (ac) out += VIRAMA; // conjunct: add virama before this consonant
+          out += C[k];
+          ac = true;
+          i += k.length;
+          hit = true;
+          break;
+        }
+      }
+      if (hit) continue;
+
+      // 2. Try vowel match (longest key first)
+      for (const k of vKeys) {
+        if (i + k.length <= w.length && w.substring(i, i + k.length) === k) {
+          out += ac ? V[k][1] : V[k][0]; // matra if after consonant, else independent
+          ac = false;
+          i += k.length;
+          hit = true;
+          break;
+        }
+      }
+      if (hit) continue;
+
+      // 3. Unknown character — pass through as-is
+      ac = false;
+      out += word[i];
+      i++;
+    }
+
+    // Word-final consonant: add virama to suppress inherent 'a'
+    if (ac) out += VIRAMA;
+    return out;
+  }
+
+  // Only transliterate alphabetic runs; preserve numbers, spaces, punctuation
+  return text.replace(/[a-zA-Z]+/g, convert);
+}
+
+// ======================================================================
 //  Shared drawing functions
 // ======================================================================
 
@@ -370,23 +506,32 @@ function drawKannadaPage(doc, data, hasKannadaFont) {
   function kField(kanLabel, engLabel, val, fy) {
     const label = hasKannadaFont ? kanLabel : engLabel;
     doc.fontSize(10).fillColor('#000000').font(hasKannadaFont ? KF : 'Helvetica-Bold').text(label, LEFT, fy);
-    doc.fontSize(10).font('Helvetica').text(val || '\u2014', vx, fy, { width: CONTENT_W - 155 });
+    const valStr = val || '\u2014';
+    // Use Kannada font if the value contains Kannada characters
+    const valFont = (hasKannadaFont && /[\u0C80-\u0CFF]/.test(valStr)) ? KF : 'Helvetica';
+    doc.fontSize(10).font(valFont).text(valStr, vx, fy, { width: CONTENT_W - 155 });
     // Return the bottom Y so we can handle multi-line wrapping
     return Math.max(fy + 14, doc.y);
   }
 
-  // ಭಕ್ತರ ಹೆಸರು / Devotee Name
-  y = kField('\u0CAD\u0C95\u0CCD\u0CA4\u0CB0 \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1:', 'Devotee Name:', data.full_name, y) + 4;
-  // ಗೋತ್ರ / Gotra
-  y = kField('\u0C97\u0CCB\u0CA4\u0CCD\u0CB0:', 'Gotra:', data.gotra, y) + 4;
-  // ನಕ್ಷತ್ರ / Nakshatra
-  y = kField('\u0CA8\u0C95\u0CCD\u0CB7\u0CA4\u0CCD\u0CB0:', 'Nakshatra:', data.nakshatra, y) + 4;
-  // ವಿಳಾಸ / Address
+  // Transliterate text fields to Kannada (only when Kannada font is available)
+  const kanName = hasKannadaFont ? transliterateToKannada(data.full_name) : data.full_name;
+  const kanGotra = hasKannadaFont ? transliterateToKannada(data.gotra) : data.gotra;
+  const kanNakshatra = hasKannadaFont ? transliterateToKannada(data.nakshatra) : data.nakshatra;
   const addr = [data.address, data.city, data.state, data.pincode].filter(Boolean).join(', ');
-  y = kField('\u0CB5\u0CBF\u0CB3\u0CBE\u0CB8:', 'Address:', addr, y) + 4;
-  // ಮೊಬೈಲ್ ಸಂಖ್ಯೆ / Mobile No
+  const kanAddr = hasKannadaFont ? transliterateToKannada(addr) : addr;
+
+  // ಭಕ್ತರ ಹೆಸರು / Devotee Name
+  y = kField('\u0CAD\u0C95\u0CCD\u0CA4\u0CB0 \u0CB9\u0CC6\u0CB8\u0CB0\u0CC1:', 'Devotee Name:', kanName, y) + 4;
+  // ಗೋತ್ರ / Gotra
+  y = kField('\u0C97\u0CCB\u0CA4\u0CCD\u0CB0:', 'Gotra:', kanGotra, y) + 4;
+  // ನಕ್ಷತ್ರ / Nakshatra
+  y = kField('\u0CA8\u0C95\u0CCD\u0CB7\u0CA4\u0CCD\u0CB0:', 'Nakshatra:', kanNakshatra, y) + 4;
+  // ವಿಳಾಸ / Address
+  y = kField('\u0CB5\u0CBF\u0CB3\u0CBE\u0CB8:', 'Address:', kanAddr, y) + 4;
+  // ಮೊಬೈಲ್ ಸಂಖ್ಯೆ / Mobile No  (keep in digits — no transliteration)
   y = kField('\u0CAE\u0CCA\u0CAC\u0CC8\u0CB2\u0CCD \u0CB8\u0C82\u0C96\u0CCD\u0CAF\u0CC6:', 'Mobile No:', data.phone, y) + 4;
-  // ಇಮೇಲ್ ಐಡಿ / Email ID
+  // ಇಮೇಲ್ ಐಡಿ / Email ID  (keep in English — no transliteration)
   y = kField('\u0C87\u0CAE\u0CC7\u0CB2\u0CCD \u0C90\u0CA1\u0CBF:', 'Email ID:', data.email, y) + 4;
 
   // ವ್ಯವಹಾರ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ / Transaction Reference No
