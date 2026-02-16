@@ -25,7 +25,7 @@ const PLANS = [
     benefits: [
       'Monthly Archana & Sankalpa name inclusion',
       'Prasadam on temple visit',
-      "Naivedya offered to the Goddess on a specific day in devotee's name",
+      "Naivedya offered to the Goddess on a specific date in devotee's name",
       'Festival and puja notifications (notification only)',
       'Digital membership certificate',
     ],

@@ -429,6 +429,15 @@ function drawEnglishPage(doc, data, hasKannadaFont) {
     .font('Helvetica-Bold').text(sevaName, { continued: true })
     .font('Helvetica').text(' Seva/Temple Activities of Shree Samrajyalakshmi Temple.', { width: CONTENT_W });
 
+  // Custom Seva Notes / Remarks (entered by admin)
+  if (data.seva_notes && data.seva_notes.trim()) {
+    y = doc.y + 14;
+    doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold')
+      .text('Remarks: ', LEFT, y, { continued: true })
+      .font('Helvetica-Oblique')
+      .text(data.seva_notes.trim(), { width: CONTENT_W - 70 });
+  }
+
   // Seva Note (plan-specific inclusions)
   const sevaNote = getSevaNote(data.plan_type);
   if (sevaNote) {
@@ -599,6 +608,22 @@ function drawKannadaPage(doc, data, hasKannadaFont) {
       .text('is received as a voluntary devotional contribution towards ', LEFT, y, { continued: true, width: CONTENT_W })
       .font('Helvetica-Bold').text(sevaName, { continued: true })
       .font('Helvetica').text(' Seva/Temple Activities of Shree Samrajyalakshmi Temple.', { width: CONTENT_W });
+  }
+
+  // Custom Seva Notes / Remarks (entered by admin)
+  if (data.seva_notes && data.seva_notes.trim()) {
+    y = doc.y + 14;
+    if (hasKannadaFont) {
+      const kanRemarks = transliterateToKannada(data.seva_notes.trim());
+      doc.fontSize(10).fillColor('#000000').font(KF)
+        .text('\u0C9F\u0CBF\u0CAA\u0CCD\u0CAA\u0CA3\u0CBF\u0C97\u0CB3\u0CC1: ', LEFT, y, { continued: true }) // ಟಿಪ್ಪಣಿಗಳು:
+        .text(kanRemarks, { width: CONTENT_W - 90 });
+    } else {
+      doc.fontSize(10).fillColor('#000000').font('Helvetica-Bold')
+        .text('Remarks: ', LEFT, y, { continued: true })
+        .font('Helvetica-Oblique')
+        .text(data.seva_notes.trim(), { width: CONTENT_W - 70 });
+    }
   }
 
   // Seva Note (plan-specific inclusions) — Kannada note on Kannada page

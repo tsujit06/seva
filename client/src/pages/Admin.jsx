@@ -46,7 +46,7 @@ const PLAN_BENEFITS = {
   sahasranama: [
     'Name included in monthly Archana & Sankalpa',
     'Prasadam on Temple visit',
-    "Naivedya offered to the Goddess on a specific day in devotee's name",
+    "Naivedya offered to the Goddess on a specific date in devotee's name",
     'Festival & puja notifications (Notification only)',
     'Digital membership certificate',
   ],
@@ -230,6 +230,9 @@ export default function Admin() {
       // Reset form for next entry
       setForm({ ...EMPTY_FORM });
       loadDashboard();
+
+      // Scroll to top so admin sees the success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setActionMsg({ type: 'error', text: err.message });
     } finally {
