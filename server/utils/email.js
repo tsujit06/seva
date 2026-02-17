@@ -43,9 +43,6 @@ function buildReceiptHTML(recipientName, transactionId) {
       </div>
       <div style="padding: 28px 24px;">
         <p style="color: #5D3A1A; font-size: 15px; line-height: 1.7;">
-          <strong>Om Samrajyalakshmiyai Namaha</strong>
-        </p>
-        <p style="color: #5D3A1A; font-size: 15px; line-height: 1.7;">
           Dear <strong>${recipientName}</strong>,
         </p>
         <p style="color: #5D3A1A; font-size: 15px; line-height: 1.7;">
