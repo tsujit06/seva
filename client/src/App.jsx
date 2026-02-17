@@ -18,7 +18,7 @@ function Header() {
             className="header-logo-img"
           />
           <div>
-            <div className="header-title-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
+            <div className="header-title-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜ್ಯಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
             <div className="header-title">SHREE SAMRAJYALAKSHMI TEMPLE</div>
             <div className="header-subtitle">Devotee Seva Membership Portal</div>
           </div>
@@ -40,7 +40,7 @@ function Header() {
 function Footer() {
   return (
     <footer className="temple-footer">
-      <div className="footer-temple-name-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
+      <div className="footer-temple-name-kannada">ಶ್ರೀ ಸಾಮ್ರಾಜ್ಯಲಕ್ಷ್ಮಿ ದೇವಾಲಯ</div>
       <div className="footer-temple-name">SHREE SAMRAJYALAKSHMI TEMPLE</div>
       <div className="footer-text">
         Thonachagondanahalli Village, Madhugiri Taluk, Karnataka (Bharat) - 572112
