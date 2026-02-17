@@ -27,6 +27,11 @@ app.use('/api/members', require('./routes/members'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/admin', require('./routes/admin'));
 
+// Health check endpoint (used by keep-alive ping)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
 // Serve plans data
 app.get('/api/plans', (req, res) => {
   const { SEVA_PLANS } = require('./utils/plans');
@@ -68,6 +73,21 @@ app.listen(PORT, () => {
   console.log(`   Running on http://localhost:${PORT}`);
   console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`   Admin: /admin\n`);
+
+  // Keep-alive: ping self every 14 minutes to prevent Render free-tier spin-down
+  if (process.env.RENDER_EXTERNAL_URL || process.env.NODE_ENV === 'production') {
+    const KEEP_ALIVE_INTERVAL = 14 * 60 * 1000; // 14 minutes
+    const serviceUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    setInterval(() => {
+      const https = serviceUrl.startsWith('https') ? require('https') : require('http');
+      https.get(`${serviceUrl}/api/health`, (res) => {
+        console.log(`⏰ Keep-alive ping: ${res.statusCode}`);
+      }).on('error', (err) => {
+        console.log(`⏰ Keep-alive ping failed: ${err.message}`);
+      });
+    }, KEEP_ALIVE_INTERVAL);
+    console.log(`   ⏰ Keep-alive enabled (every 14 min)\n`);
+  }
 });
 
 module.exports = app;
